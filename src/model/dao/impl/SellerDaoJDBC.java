@@ -59,17 +59,8 @@ public class SellerDaoJDBC implements SellerDao {
 			rs = st.executeQuery(); // pegando resultado
 			if (rs.next()) { //se falso null, se verdadeiro retorna tabela do vendedor
 				//associar vendedor com departamento
-				Department dep = new Department();//var temporária recebendo id e nome do departamento
-				dep.setId(rs.getInt("DepartmentId"));//pega ID departamento no bd
-				dep.setName(rs.getString("DepName"));//pega nome departamento
-				Seller obj = new Seller();// var temporária pegando vendedor
-				obj.setId(rs.getInt("Id"));
-				obj.setName(rs.getString("Name"));
-				obj.setEmail(rs.getString("Email"));
-				obj.setBaseSalary(rs.getDouble("BaseSalary"));
-				obj.setBirthDate(rs.getDate("BirthDate"));
-				obj.setDepartment(dep);//pegando objeto dep fazendo associação vendedor e departamento
-				//conforme construtor na classe Seller
+				Department dep = instantiateDepartment(rs);
+				Seller obj = instantiateSeller(rs, dep);
 				return obj; //retornando o objeto
 			}
 			return null;
@@ -82,6 +73,25 @@ public class SellerDaoJDBC implements SellerDao {
 		DB.closeResultSet(rs);
 		//não fechar conexão aqui(coon) porque o mesmo obj pode ter mais operações, fechar conexão no program depois
 		}
+	}
+	private Seller instantiateSeller(ResultSet rs, Department dep) throws SQLException {
+		Seller obj = new Seller();// var temporária pegando vendedor
+		obj.setId(rs.getInt("Id"));
+		obj.setName(rs.getString("Name"));
+		obj.setEmail(rs.getString("Email"));
+		obj.setBaseSalary(rs.getDouble("BaseSalary"));
+		obj.setBirthDate(rs.getDate("BirthDate"));
+		obj.setDepartment(dep);//pegando objeto dep fazendo associação vendedor e departamento
+		//conforme construtor na classe Seller
+		return obj;
+	}
+
+	//metodo para instânciar departamento, limpando codigo
+	private Department instantiateDepartment(ResultSet rs) throws SQLException{ //não trata, já tratou antes
+		Department dep = new Department();//var temporária recebendo id e nome do departamento
+		dep.setId(rs.getInt("DepartmentId"));//pega ID departamento no bd
+		dep.setName(rs.getString("DepName"));//pega nome departamento
+		return dep;
 	}
 
 	@Override

@@ -14,6 +14,7 @@ public class Program {
 		 */
 		SellerDao sellerDao = DaoFactory.createSellerDao(); // vai permitir a var fazer operações no banco de dados
 		
+		System.out.println("===TEST 1: seller findById =====");
 		Seller seller = sellerDao.findById(3); //através da interface SellerDao pegando o resultado(vendedor) do ID
 		
 		System.out.println(seller);
