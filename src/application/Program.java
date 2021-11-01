@@ -1,7 +1,10 @@
 package application;
 
+import java.util.List;
+
 import model.dao.DaoFactory;
 import model.dao.SellerDao;
+import model.entities.Department;
 import model.entities.Seller;
 
 public class Program {
@@ -18,6 +21,14 @@ public class Program {
 		Seller seller = sellerDao.findById(3); //através da interface SellerDao pegando o resultado(vendedor) do ID
 		
 		System.out.println(seller);
+		
+		System.out.println("\n===TEST 2: seller findByDepartment =====");
+		Department department = new Department(2, null);//pegando uma department só com ID
+		List<Seller> list = sellerDao.findByDepartment(department);//pegando a var de cima
+		for (Seller obj : list) {
+			System.out.println(obj);
+		}
+		
 	}
 
 }

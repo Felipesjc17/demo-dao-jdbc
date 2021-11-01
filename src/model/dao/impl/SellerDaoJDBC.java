@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import db.DB;
 import db.DbException;
@@ -98,6 +101,51 @@ public class SellerDaoJDBC implements SellerDao {
 	public List<Seller> findAll() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<Seller> findByDepartment(Department department) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try { //comando sql
+			st = conn.prepareStatement( //iniciando prepareStatement
+					"SELECT seller.*,department.Name as DepName " 
+					+ "FROM seller INNER JOIN department "
+					+ "ON seller.DepartmentId = department.Id "
+					+ "WHERE DepartmentId = ? "
+					+ "ORDER BY Name");
+			
+			st.setInt(1, department.getId());//primeiro e unico ? preenche com id do departamento
+			
+			rs = st.executeQuery(); // pegando resultado
+			
+			List<Seller> list = new ArrayList<>(); //lista que armazenará resultados
+			Map<Integer, Department> map = new HashMap<>();
+			
+			while (rs.next()) { // pode ser 0 ou mais valores, while no lugar de if percorre resultados 
+				//vai verificar se dentro do map já tem algum ID igual departmentId, se não tiver dep vai valer null
+				Department dep = map.get(rs.getInt("DepartmentId")); //map tem esse DepartamentoId? se não null
+				
+				//controlador para não instânciar repetidamente o departamento
+				//se dep = null vai instânciar departamento, objetivo é não ficar repetindo instanciar mesmo departamento
+				if (dep == null) {
+				dep = instantiateDepartment(rs); //dep sendo null(não achando um igual no map, vai ser instânciado)
+				map.put(rs.getInt("DepartmentId"), dep); //add no map para departamento não ser instanciado novamente
+				}
+				
+				Seller obj = instantiateSeller(rs, dep); //instÂncia vendedor apontando para instância do departamento
+				list.add(obj);//adiciona na lista
+			}
+			return list;
+		}
+		catch (SQLException e ) {
+			throw new DbException(e.getMessage()); //excessão personalizada
+		}
+		finally {//fechando recursos rs e st
+		DB.closeStatement(st);
+		DB.closeResultSet(rs);
+		//não fechar conexão aqui(coon) porque o mesmo obj pode ter mais operações, fechar conexão no program depois
+		}
 	}
 
 }
