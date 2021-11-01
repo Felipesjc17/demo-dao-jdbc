@@ -1,5 +1,6 @@
 package model.dao;
 
+import db.DB;
 import model.dao.impl.SellerDaoJDBC;
 
 /*
@@ -12,6 +13,6 @@ public class DaoFactory {
 	 * fazendo uma injeção de dependência 
 	 */ 
 	public static SellerDao createSellerDao() { 
-		return new SellerDaoJDBC(); 
+		return new SellerDaoJDBC(DB.getConnection()); //A Interface SellerDao retorna SellerDaoJDBC (responsável por ações no banco) que tem a conexão como argumento 
 	}
 }
