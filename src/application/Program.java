@@ -25,6 +25,7 @@ public class Program {
 		System.out.println("\n===TEST 2: seller findByDepartment =====");
 		Department department = new Department(2, null);//pegando uma department só com ID
 		List<Seller> list = sellerDao.findByDepartment(department);//pegando a var de cima
+		//lista de departamento sendo impressa
 		for (Seller obj : list) {
 			System.out.println(obj);
 		}
