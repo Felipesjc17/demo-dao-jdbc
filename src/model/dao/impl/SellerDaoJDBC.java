@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +32,39 @@ public class SellerDaoJDBC implements SellerDao {
 
 	@Override
 	public void insert(Seller obj) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
+		try {
+			st =conn.prepareStatement(
+					"INSERT INTO seller "
+					+ "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
+					+ "VALUES "
+					+ "(?, ?, ?, ?, ?)", 
+					Statement.RETURN_GENERATED_KEYS); //volta id após inserir
 		
+			st.setString(1, obj.getName());
+			st.setString(2, obj.getEmail());
+			st.setDate(3, new java.sql.Date(obj.getBirthDate().getTime()));
+			st.setDouble(4, obj.getBaseSalary());
+			st.setInt(5, obj.getDepartment().getId());
+			
+			int rowsAffected = st.executeUpdate();
+			
+			if(rowsAffected > 0) {
+				ResultSet rs = st.getGeneratedKeys(); //pegando id gerado
+				if (rs.next()) {
+					int id = rs.getInt(1); //pegando id no rs , primeira coluna
+					obj.setId(id); //já passando Id para obj
+				}
+				DB.closeResultSet(rs); // fechando dentro do escopo
+			}else {// caso nenhuma linha seja alterada lança exceção
+				throw new DbException("Unexpected error! No rows affected!");
+			}
+		}catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+		}
 	}
 
 	@Override
@@ -69,7 +101,7 @@ public class SellerDaoJDBC implements SellerDao {
 			return null;
 		}
 		catch (SQLException e ) {
-			throw new DbException(e.getMessage()); //excessão personalizada
+			throw new DbException(e.getMessage()); //exceção personalizada
 		}
 		finally {//fechando recursos rs e st
 		DB.closeStatement(st);
@@ -132,7 +164,7 @@ public class SellerDaoJDBC implements SellerDao {
 			return list;
 		}
 		catch (SQLException e ) {
-			throw new DbException(e.getMessage()); //excessão personalizada
+			throw new DbException(e.getMessage()); //exceção personalizada
 		}
 		finally {//fechando recursos rs e st
 		DB.closeStatement(st);
