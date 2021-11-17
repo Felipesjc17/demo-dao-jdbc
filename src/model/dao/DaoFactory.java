@@ -1,6 +1,7 @@
 package model.dao;
 
 import db.DB;
+import model.dao.impl.DepartmentDaoJDBC;
 import model.dao.impl.SellerDaoJDBC;
 
 /*
@@ -14,5 +15,9 @@ public class DaoFactory {
 	 */ 
 	public static SellerDao createSellerDao() { 
 		return new SellerDaoJDBC(DB.getConnection()); //A Interface SellerDao retorna SellerDaoJDBC (responsável por ações no banco) que tem a conexão como argumento 
+	}
+	
+	public static DepartmentDao createDepartmentDao() {
+		return new DepartmentDaoJDBC(DB.getConnection());
 	}
 }
