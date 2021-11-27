@@ -36,7 +36,7 @@ public class Program {
 		System.out.println("\n===TEST 3: seller findAll =====");
 		
 		list = sellerDao.findAll();//passando para list lista de vendedores
-		//lista de departamento sendo impressa
+		//lista de vendedores sendo impressa
 		for (Seller obj : list) {
 			System.out.println(obj);
 		}
